@@ -17,12 +17,13 @@ const FilterToolbar = ({ onFiltersChange, isLoading }) => {
 
   const stationOptions = [
     { value: 'all', label: 'All Stations' },
-    { value: 'thane-belapur-1', label: 'Thane-Belapur Industrial Zone 1' },
-    { value: 'thane-belapur-2', label: 'Thane-Belapur Industrial Zone 2' },
-    { value: 'vashi-station', label: 'Vashi Monitoring Station' },
-    { value: 'nerul-station', label: 'Nerul Environmental Station' },
-    { value: 'panvel-industrial', label: 'Panvel Industrial Complex' },
-    { value: 'kharghar-residential', label: 'Kharghar Residential Area' }
+    { value: '3409620', label: 'Anand Vihar, Delhi' },
+    { value: '3409621', label: 'ITO, Delhi' },
+    { value: '3409622', label: 'Punjabi Bagh, Delhi' },
+    { value: '3409623', label: 'RK Puram, Delhi' },
+    { value: '3409624', label: 'Dwarka Sector 8, Delhi' },
+    { value: '3409625', label: 'Noida Sector 62, NCR' },
+    { value: '3409626', label: 'Gurugram Sector 51, NCR' }
   ];
 
   const timeframeOptions = [

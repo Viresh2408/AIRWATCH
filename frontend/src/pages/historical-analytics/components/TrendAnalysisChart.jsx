@@ -13,14 +13,15 @@ const COLORS = {
 
 const TrendAnalysisChart = () => {
   const [stationOptions, setStationOptions] = useState([
-    { id: 3409469, name: 'Kasarvadavali, Thane' },
-    { id: 3409472, name: 'Upvan Fort, Thane' },
-    { id: 6943,    name: 'Mahape, Navi Mumbai' },
-    { id: 3409477, name: 'Kopripada-Vashi' },
-    { id: 3409487, name: 'Sanpada, Navi Mumbai' },
-    { id: 3409476, name: 'CBD Belapur' },
+    { id: 3409620, name: 'Anand Vihar, Delhi' },
+    { id: 3409621, name: 'ITO, Delhi' },
+    { id: 3409622, name: 'Punjabi Bagh, Delhi' },
+    { id: 3409623, name: 'RK Puram, Delhi' },
+    { id: 3409624, name: 'Dwarka Sector 8, Delhi' },
+    { id: 3409625, name: 'Noida Sector 62, NCR' },
+    { id: 3409626, name: 'Gurugram Sector 51, NCR' },
   ]);
-  const [stationId, setStationId] = useState(3409476);
+  const [stationId, setStationId] = useState(3409620);
   const [hours, setHours] = useState(168);
   const [chartType, setChartType] = useState('area');
   const [pollutants, setPollutants] = useState(['AQI', 'pm25', 'pm10']);
@@ -32,6 +33,9 @@ const TrendAnalysisChart = () => {
     getStations().then(stations => {
       if (stations && stations.length > 0) {
         setStationOptions(stations.map(s => ({ id: s.id, name: s.name.split(' - ')[0] })));
+        if (!stations.some(s => s.id === stationId)) {
+          setStationId(stations[0].id);
+        }
       }
     }).catch(() => {});
   }, []);

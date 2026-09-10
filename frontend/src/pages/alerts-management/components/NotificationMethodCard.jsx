@@ -8,17 +8,32 @@ const NotificationMethodCard = ({
   description, 
   enabled = false, 
   settings = {},
+  isExpanded,
+  onToggleExpand,
   onToggle,
   onSettingsChange 
 }) => {
   const [isEnabled, setIsEnabled] = useState(enabled);
   const [methodSettings, setMethodSettings] = useState(settings);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showSettingsInternal, setShowSettingsInternal] = useState(false);
+
+  const isSettingsOpen = isExpanded !== undefined ? isExpanded : showSettingsInternal;
 
   const handleToggle = () => {
     const newEnabled = !isEnabled;
     setIsEnabled(newEnabled);
+    if (!newEnabled && isSettingsOpen && onToggleExpand) {
+      onToggleExpand();
+    }
     onToggle && onToggle(method, newEnabled);
+  };
+
+  const toggleSettings = () => {
+    if (onToggleExpand) {
+      onToggleExpand();
+    } else {
+      setShowSettingsInternal(!showSettingsInternal);
+    }
   };
 
   const handleSettingChange = (key, value) => {
@@ -177,6 +192,7 @@ const NotificationMethodCard = ({
         </div>
         
         <button
+          type="button"
           onClick={handleToggle}
           className={`
             relative w-12 h-6 rounded-full transition-colors
@@ -193,14 +209,15 @@ const NotificationMethodCard = ({
       {isEnabled && (
         <div className="space-y-4 pt-4 border-t border-border">
           <button
-            onClick={() => setShowSettings(!showSettings)}
+            type="button"
+            onClick={toggleSettings}
             className="flex items-center space-x-2 text-sm text-primary hover:text-primary/80 transition-smooth"
           >
-            <Icon name={showSettings ? "ChevronUp" : "ChevronDown"} size={16} />
+            <Icon name={isSettingsOpen ? "ChevronUp" : "ChevronDown"} size={16} />
             <span>Configure settings</span>
           </button>
 
-          {showSettings && (
+          {isSettingsOpen && (
             <div className="pl-4 border-l-2 border-primary/20">
               {renderSettings()}
             </div>

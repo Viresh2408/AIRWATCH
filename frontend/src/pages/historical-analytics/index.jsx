@@ -17,12 +17,13 @@ import ExportPanel from './components/ExportPanel';
 const HistoricalAnalytics = () => {
   const navigate = useNavigate();
   const [stations, setStations] = useState([
-    { id: 3409469, name: 'Kasarvadavali, Thane' },
-    { id: 3409472, name: 'Upvan Fort, Thane' },
-    { id: 6943, name: 'Mahape, Navi Mumbai' },
-    { id: 3409477, name: 'Kopripada-Vashi, Navi Mumbai' },
-    { id: 3409487, name: 'Sanpada, Navi Mumbai' },
-    { id: 3409476, name: 'CBD Belapur, Belapur' }
+    { id: 3409620, name: 'Anand Vihar, Delhi' },
+    { id: 3409621, name: 'ITO, Delhi' },
+    { id: 3409622, name: 'Punjabi Bagh, Delhi' },
+    { id: 3409623, name: 'RK Puram, Delhi' },
+    { id: 3409624, name: 'Dwarka Sector 8, Delhi' },
+    { id: 3409625, name: 'Noida Sector 62, NCR' },
+    { id: 3409626, name: 'Gurugram Sector 51, NCR' }
   ]);
   const [analyticsData, setAnalyticsData] = useState(null);
   const now = new Date();

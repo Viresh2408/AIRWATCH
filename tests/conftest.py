@@ -5,6 +5,22 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+@pytest.fixture(scope="session")
+def client():
+    """FastAPI TestClient fixture shared across tests in a session.
+
+    Used by test_security.py and any other test that needs to make HTTP
+    requests against the app without a running server.
+    """
+    _fastapi_path = os.path.join(os.path.dirname(__file__), '..', 'fastapi_app')
+    if _fastapi_path not in sys.path:
+        sys.path.insert(0, _fastapi_path)
+    from fastapi.testclient import TestClient
+    from app.main import app
+    with TestClient(app) as c:
+        yield c
+
+
 @pytest.fixture
 def sample_pollutants():
     """Sample pollutant data for testing."""

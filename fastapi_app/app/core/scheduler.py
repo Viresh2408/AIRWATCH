@@ -31,17 +31,18 @@ scheduler = BackgroundScheduler(timezone="Asia/Kolkata")
 def job_live_ingestion():
     """
     Job 0 — Runs every 15 minutes.
-    Calls OpenAQ v3 API for each station, fetches readings newer than
-    the latest timestamp in DB, and inserts them. Keeps data current.
+    Calls live Delhi telemetry ingestion to pull the latest real-time
+    observational air quality and meteorology data from Open-Meteo,
+    keeping readings and coupled forecasts fresh for all stations.
     """
     logger.info(f"[SCHEDULER] job_live_ingestion started at {datetime.now()}")
     try:
         from app.core.db import SessionLocal
-        from app.services.live_ingestion import run_live_ingestion
+        from app.services.live_delhi_fetcher import ingest_live_delhi_telemetry
 
         db = SessionLocal()
         try:
-            summary = run_live_ingestion(db)
+            summary = ingest_live_delhi_telemetry(db)
             logger.info(f"[SCHEDULER] job_live_ingestion done. Summary: {summary}")
         finally:
             db.close()

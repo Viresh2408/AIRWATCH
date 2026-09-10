@@ -22,6 +22,7 @@ const AlertsManagement = () => {
   const [filterTimeRange, setFilterTimeRange] = useState('7d');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [expandedNotificationMethod, setExpandedNotificationMethod] = useState(null);
 
   // Enhanced alert levels based on standard AQI categories
   const alertLevels = [
@@ -328,6 +329,12 @@ const AlertsManagement = () => {
                     description={method?.description}
                     enabled={method?.enabled}
                     settings={method?.settings}
+                    isExpanded={expandedNotificationMethod === method?.method}
+                    onToggleExpand={() => {
+                      setExpandedNotificationMethod(prev => 
+                        prev === method?.method ? null : method?.method
+                      );
+                    }}
                     onToggle={handleNotificationToggle}
                   />
                 ))}

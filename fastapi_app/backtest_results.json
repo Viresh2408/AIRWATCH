@@ -1,0 +1,37 @@
+{
+  "evaluation_timesteps": 200,
+  "severe_episodes_count": 114,
+  "overall": {
+    "uncoupled_baseline": {
+      "rmse": 25.41,
+      "mae": 22.02,
+      "r2": -5.051
+    },
+    "coupled_feedback": {
+      "rmse": 25.41,
+      "mae": 22.02,
+      "r2": -5.046
+    },
+    "rmse_improvement_pct": 0.0
+  },
+  "severe_inversion_subset_pbl_lt_300m": {
+    "uncoupled_baseline": {
+      "rmse": 27.91,
+      "mae": 23.15,
+      "r2": -6.249
+    },
+    "coupled_feedback": {
+      "rmse": 27.92,
+      "mae": 23.16,
+      "r2": -6.249
+    },
+    "rmse_improvement_pct": -0.0
+  },
+  "coefficients_used": {
+    "alpha_pm_pbl": 0.18,
+    "beta_temp_pm": 0.25,
+    "convergence_threshold_ugm3": 2.0,
+    "max_iterations": 3
+  },
+  "timestamp": "2026-09-10T13:45:39.937648+00:00"
+}

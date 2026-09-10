@@ -2,89 +2,103 @@ import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 
 const AQIMapView = ({ className = '' }) => {
-  // Real stations data with coordinates - NO LOADING
+  // Real stations data with Delhi NCR coordinates (SIH PS 26082)
   const [stations] = useState([
     {
-      id: 3409469,
-      name: 'Kasarvadavali, Thane',
-      location: 'Kasarvadavali, Thane',
-      coordinates: { lat: 19.2183, lng: 72.9781 },
-      aqi: 78,
-      status: 'Moderate',
-      color: '#F59E0B',
+      id: 3409620,
+      name: 'Anand Vihar, Delhi',
+      location: 'East Delhi, Delhi NCR',
+      coordinates: { lat: 28.6469, lng: 77.3164 },
+      aqi: 365,
+      status: 'Very Poor',
+      color: '#8f3f97',
       pollutants: {
-        pm25: 45, pm10: 68, no2: 32, so2: 15, co: 1.2, o3: 85,
-        temperature: 28.5, humidity: 65, no: 22
+        pm25: 310, pm10: 440, no2: 95, so2: 24, co: 2.5, o3: 45,
+        temperature: 21.5, humidity: 72, no: 48
       },
       lastUpdated: new Date().toISOString()
     },
     {
-      id: 3409472,
-      name: 'Upvan Fort, Thane',
-      location: 'Upvan Fort, Thane',
-      coordinates: { lat: 19.2215, lng: 72.9678 },
-      aqi: 92,
-      status: 'Moderate',
-      color: '#F59E0B',
+      id: 3409621,
+      name: 'ITO, Delhi',
+      location: 'Central Delhi, Delhi NCR',
+      coordinates: { lat: 28.6310, lng: 77.2433 },
+      aqi: 310,
+      status: 'Very Poor',
+      color: '#8f3f97',
       pollutants: {
-        pm25: 52, pm10: 78, no2: 38, so2: 18, co: 1.5, o3: 92,
-        temperature: 29.1, humidity: 62, no: 28
+        pm25: 260, pm10: 380, no2: 110, so2: 28, co: 2.2, o3: 55,
+        temperature: 22.0, humidity: 68, no: 55
       },
       lastUpdated: new Date().toISOString()
     },
     {
-      id: 6943,
-      name: 'Mahape, Navi Mumbai',
-      location: 'Mahape, Navi Mumbai',
-      coordinates: { lat: 19.1526, lng: 73.0216 },
-      aqi: 85,
-      status: 'Moderate',
-      color: '#F59E0B',
+      id: 3409622,
+      name: 'Punjabi Bagh, Delhi',
+      location: 'West Delhi, Delhi NCR',
+      coordinates: { lat: 28.6683, lng: 77.1333 },
+      aqi: 325,
+      status: 'Very Poor',
+      color: '#8f3f97',
       pollutants: {
-        pm25: 48, pm10: 72, no2: 35, so2: 16, co: 1.3, o3: 88,
-        temperature: 27.8, humidity: 68, no: 25
+        pm25: 280, pm10: 410, no2: 85, so2: 20, co: 2.1, o3: 48,
+        temperature: 20.8, humidity: 75, no: 42
       },
       lastUpdated: new Date().toISOString()
     },
     {
-      id: 3409477,
-      name: 'Kopripada-Vashi, Navi Mumbai',
-      location: 'Kopripada-Vashi, Navi Mumbai',
-      coordinates: { lat: 19.0726, lng: 73.0076 },
-      aqi: 105,
-      status: 'Unhealthy for Sensitive Groups',
-      color: '#EF4444',
+      id: 3409623,
+      name: 'RK Puram, Delhi',
+      location: 'South Delhi, Delhi NCR',
+      coordinates: { lat: 28.5644, lng: 77.1895 },
+      aqi: 280,
+      status: 'Poor',
+      color: '#ff7e00',
       pollutants: {
-        pm25: 58, pm10: 89, no2: 42, so2: 22, co: 1.8, o3: 105,
-        temperature: 30.2, humidity: 58, no: 35
+        pm25: 220, pm10: 330, no2: 75, so2: 16, co: 1.8, o3: 52,
+        temperature: 21.2, humidity: 70, no: 38
       },
       lastUpdated: new Date().toISOString()
     },
     {
-      id: 3409487,
-      name: 'Sanpada, Navi Mumbai',
-      location: 'Sanpada, Navi Mumbai',
-      coordinates: { lat: 19.0640, lng: 73.0133 },
-      aqi: 72,
-      status: 'Moderate',
-      color: '#F59E0B',
+      id: 3409624,
+      name: 'Dwarka Sector 8, Delhi',
+      location: 'South-West Delhi, Delhi NCR',
+      coordinates: { lat: 28.5822, lng: 77.0330 },
+      aqi: 295,
+      status: 'Poor',
+      color: '#ff7e00',
       pollutants: {
-        pm25: 42, pm10: 65, no2: 29, so2: 14, co: 1.1, o3: 82,
-        temperature: 28.9, humidity: 64, no: 21
+        pm25: 240, pm10: 350, no2: 70, so2: 17, co: 1.9, o3: 60,
+        temperature: 20.5, humidity: 74, no: 34
       },
       lastUpdated: new Date().toISOString()
     },
     {
-      id: 3409476,
-      name: 'CBD Belapur, Belapur',
-      location: 'CBD Belapur, Belapur',
-      coordinates: { lat: 19.0330, lng: 73.0297 },
-      aqi: 96,
-      status: 'Moderate',
-      color: '#F59E0B',
+      id: 3409625,
+      name: 'Noida Sector 62, NCR',
+      location: 'Uttar Pradesh, Delhi NCR',
+      coordinates: { lat: 28.6270, lng: 77.3640 },
+      aqi: 320,
+      status: 'Very Poor',
+      color: '#8f3f97',
       pollutants: {
-        pm25: 54, pm10: 82, no2: 36, so2: 19, co: 1.6, o3: 96,
-        temperature: 29.7, humidity: 60, no: 31
+        pm25: 270, pm10: 395, no2: 82, so2: 21, co: 2.0, o3: 50,
+        temperature: 21.8, humidity: 71, no: 44
+      },
+      lastUpdated: new Date().toISOString()
+    },
+    {
+      id: 3409626,
+      name: 'Gurugram Sector 51, NCR',
+      location: 'Haryana, Delhi NCR',
+      coordinates: { lat: 28.4595, lng: 77.0266 },
+      aqi: 285,
+      status: 'Poor',
+      color: '#ff7e00',
+      pollutants: {
+        pm25: 230, pm10: 340, no2: 78, so2: 18, co: 1.9, o3: 58,
+        temperature: 20.9, humidity: 73, no: 36
       },
       lastUpdated: new Date().toISOString()
     }

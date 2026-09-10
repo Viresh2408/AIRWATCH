@@ -2,7 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, 
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from typing import List, Dict, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 from app.core.db import get_db
 from app.core.scheduler import scheduler, job_generate_predictions, job_retrain_model, job_live_ingestion
@@ -64,6 +68,38 @@ class PredictionSchema(BaseModel):
         from_attributes = True
 
 
+class Forecast72StepSchema(BaseModel):
+    """Single timestep in the 72-hour coupled forecast response."""
+    hour_offset: int
+    prediction_time: str
+    predicted_aqi: int
+    # Per-pollutant forecasts
+    predicted_pm25: Optional[float] = None
+    predicted_pm10: Optional[float] = None
+    predicted_o3: Optional[float] = None
+    # Confidence intervals (90% empirical)
+    pm25_lower: Optional[float] = None
+    pm25_upper: Optional[float] = None
+    pm10_lower: Optional[float] = None
+    pm10_upper: Optional[float] = None
+    # Coupling diagnostics
+    inversion_score: Optional[float] = None
+    inversion_category: Optional[str] = None
+    plume_pm25_contrib: Optional[float] = None
+    pbl_height_corrected: Optional[float] = None
+    iterations_run: Optional[int] = None
+    converged: Optional[bool] = None
+    model_version: Optional[str] = None
+
+
+class Forecast72Schema(BaseModel):
+    station_id: int
+    station_name: str
+    forecast_generated_at: str
+    horizon_hours: int
+    steps: List[Forecast72StepSchema]
+
+
 class HistoryPointSchema(BaseModel):
     datetime: str
     overall_aqi: int
@@ -87,16 +123,65 @@ def list_stations(db: Session = Depends(get_db)):
     return db.query(Station).all()
 
 
-# ---------------------------------------------------------------------------
-# PUBLIC — Real-time AQI
-# ---------------------------------------------------------------------------
+@router.get("/stations/{station_id}", response_model=StationSchema, tags=["Stations"])
+def get_station(station_id: int, db: Session = Depends(get_db)):
+    """Single station metadata by ID — public."""
+    station = db.query(Station).filter(Station.id == station_id).first()
+    if not station:
+        raise HTTPException(status_code=404, detail=f"Station {station_id} not found")
+    return station
+
+
+_last_auto_ingest_time: float = 0.0
+
+def _check_and_refresh_live_telemetry(db: Session) -> None:
+    """
+    Checks if telemetry is stale (>60m old or missing) and automatically
+    fetches live real-time telemetry from Open-Meteo with a 3-minute debounce.
+    """
+    global _last_auto_ingest_time
+    now = time.time()
+    if now - _last_auto_ingest_time < 180:  # Debounce: max once per 3 minutes
+        return
+
+    from app.services.live_delhi_fetcher import DELHI_STATIONS, ingest_live_delhi_telemetry
+
+    delhi_sids = tuple(s[0] for s in DELHI_STATIONS)
+    max_dt = db.execute(
+        text("SELECT MAX(datetime) FROM readings WHERE station_id IN :sids"),
+        {"sids": delhi_sids}
+    ).scalar()
+
+    need_refresh = False
+    if not max_dt:
+        need_refresh = True
+    else:
+        if isinstance(max_dt, str):
+            max_dt = datetime.fromisoformat(max_dt.replace("Z", "+00:00")[:19]).replace(tzinfo=timezone.utc)
+        elif max_dt.tzinfo is None:
+            max_dt = max_dt.replace(tzinfo=timezone.utc)
+
+        age_seconds = (datetime.now(timezone.utc) - max_dt).total_seconds()
+        if age_seconds > 3600:  # Telemetry older than 1 hour
+            need_refresh = True
+
+    if need_refresh:
+        _last_auto_ingest_time = now
+        try:
+            logger.info("[AUTO-INGEST] Telemetry is older than 60m or missing — pulling live Open-Meteo data...")
+            ingest_live_delhi_telemetry(db)
+        except Exception as e:
+            logger.error(f"[AUTO-INGEST] Failed to auto-refresh live telemetry: {e}")
 
 @router.get("/aqi/realtime/", response_model=List[RealTimeAQISchema], tags=["AQI Data"])
 def get_realtime_aqi(db: Session = Depends(get_db)):
     """
     Latest AQI for every station. Computes sub-indices and overall AQI
     from the most recent readings in the DB.
+    Guarantees real-time freshness by auto-refreshing telemetry if older than 60 minutes.
     """
+    _check_and_refresh_live_telemetry(db)
+
     stations = db.query(Station).all()
     if not stations:
         return []
@@ -285,6 +370,76 @@ def get_aqi_history(
 
 
 # ---------------------------------------------------------------------------
+# PUBLIC — 72-hour coupled forecast (Phase 2)
+# ---------------------------------------------------------------------------
+
+@router.get("/aqi/forecast72/{station_id}", response_model=Forecast72Schema, tags=["AQI Data"])
+def get_forecast_72(
+    station_id: int,
+    db: Session = Depends(get_db),
+):
+    """
+    72-hour AQI forecast with per-pollutant breakdowns (PM2.5, PM10, O3),
+    90% confidence intervals, and coupling diagnostics (inversion score,
+    fire-plume contribution, corrected PBL height, iteration count).
+
+    Data is served from the predictions table (populated by the APScheduler
+    job every 6 hours via coupling_engine). Returns the next 72 rows ordered
+    by prediction_time.
+    """
+    station = db.query(Station).filter(Station.id == station_id).first()
+    if not station:
+        raise HTTPException(status_code=404, detail=f"Station {station_id} not found")
+
+    now = datetime.now(tz=None).replace(tzinfo=None)  # naive UTC
+    predictions = (
+        db.query(Prediction)
+        .filter(
+            Prediction.station_id == station_id,
+            Prediction.prediction_time >= now,
+        )
+        .order_by(Prediction.prediction_time)
+        .limit(72)
+        .all()
+    )
+
+    steps = [
+        Forecast72StepSchema(
+            hour_offset=p.hour_offset or i + 1,
+            prediction_time=(
+                p.prediction_time.isoformat()
+                if hasattr(p.prediction_time, "isoformat")
+                else str(p.prediction_time)
+            ),
+            predicted_aqi=int(p.predicted_aqi) if p.predicted_aqi is not None else 0,
+            predicted_pm25=p.predicted_pm25,
+            predicted_pm10=p.predicted_pm10,
+            predicted_o3=p.predicted_o3,
+            pm25_lower=p.pm25_lower,
+            pm25_upper=p.pm25_upper,
+            pm10_lower=p.pm10_lower,
+            pm10_upper=p.pm10_upper,
+            inversion_score=p.inversion_score,
+            inversion_category=p.inversion_category,
+            plume_pm25_contrib=p.plume_pm25_contrib,
+            pbl_height_corrected=p.pbl_height_corrected,
+            iterations_run=p.iterations_run,
+            converged=bool(p.converged) if p.converged is not None else None,
+            model_version=p.model_version,
+        )
+        for i, p in enumerate(predictions)
+    ]
+
+    return Forecast72Schema(
+        station_id=station_id,
+        station_name=station.name,
+        forecast_generated_at=datetime.utcnow().isoformat(),
+        horizon_hours=len(steps),
+        steps=steps,
+    )
+
+
+# ---------------------------------------------------------------------------
 # PUBLIC — Predictions
 # ---------------------------------------------------------------------------
 
@@ -441,5 +596,50 @@ def trigger_retrain_now(background_tasks: BackgroundTasks):
 def trigger_ingestion_now(background_tasks: BackgroundTasks):
     background_tasks.add_task(job_live_ingestion)
     return {"message": "Live ingestion job triggered."}
+
+
+# ---------------------------------------------------------------------------
+# Groq AI Assistant & Health Advisory
+# ---------------------------------------------------------------------------
+
+from app.services.groq_ai_service import generate_ai_advisory, chat_with_airwatch
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    message: str
+    history: Optional[List[ChatMessage]] = None
+    station_id: Optional[int] = None
+
+@router.get("/ai/advisory", tags=["AI Advisory"])
+def get_air_quality_advisory(
+    station_id: Optional[int] = Query(None, description="Optional station ID to filter advisory"),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns an LLM-generated health advisory & risk assessment powered by Groq,
+    grounded in current monitoring station telemetry.
+    """
+    return generate_ai_advisory(db, station_id=station_id)
+
+
+@router.post("/ai/chat", tags=["AI Advisory"])
+def chat_with_assistant(
+    request: ChatRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Interactive AI assistant for citizens, researchers, and officials to ask
+    questions regarding current air quality, health precautions, and trends.
+    """
+    history_dicts = [h.model_dump() for h in request.history] if request.history else None
+    return chat_with_airwatch(
+        db,
+        message=request.message,
+        history=history_dicts,
+        station_id=request.station_id,
+    )
 
 

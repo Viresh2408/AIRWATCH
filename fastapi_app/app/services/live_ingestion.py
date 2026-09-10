@@ -58,27 +58,51 @@ def _wait_for_slot():
         _last_request_time = time.monotonic()
 
 # ---------------------------------------------------------------------------
-# Station → Sensor map  (params the ML model uses; nox/wind excluded)
+# Station → Sensor map — DELHI NCR CPCB stations via OpenAQ v3
+# (SIH PS 26082: replaced Navi Mumbai MPCB stations with Delhi NCR CPCB/CAAQMS)
+#
+# Station coverage:
+#   3409620 → Anand Vihar (East Delhi — most cited PM2.5 hotspot, stubble plume entry)
+#   3409621 → ITO (Central Delhi — traffic + industrial mix)
+#   3409622 → Punjabi Bagh (West Delhi — residential, good inversion signal)
+#   3409623 → RK Puram (South Delhi — residential, DPCC reference station)
+#   3409624 → Dwarka Sector 8 (SW Delhi — closer to Haryana fire corridor)
+#   3409625 → Noida Sector 62 (UP corridor — cross-boundary transport signal)
+#   3409626 → Gurugram (Haryana side — wind-fetch for stubble plume advection)
+#
+# Sensor IDs are OpenAQ v3 sensor IDs for each parameter at each station.
+# NOTE: no2 is explicitly included at every station — it is the primary NOx
+#   precursor for the O3 photochemistry sub-model (nox_precursor_lag feature).
 # ---------------------------------------------------------------------------
 STATION_SENSORS = {
-    3409469: {"co": 12238253, "no": 12238254, "no2": 12238255, "o3": 12238256,
-              "pm10": 12238257, "pm25": 12238258, "relativehumidity": 12238259,
-              "so2": 12238260, "temperature": 12238261},
-    3409472: {"co": 12238280, "no": 12238281, "no2": 12238282, "o3": 12238283,
-              "pm10": 12238284, "pm25": 12238285, "relativehumidity": 12238286,
-              "so2": 12238287, "temperature": 12238288},
-    3409476: {"co": 12238316, "no": 12238317, "no2": 12238318, "o3": 12238319,
-              "pm10": 12238320, "pm25": 12238321, "relativehumidity": 12238322,
-              "so2": 12238323, "temperature": 12238324},
-    3409477: {"co": 12238325, "no": 12238326, "no2": 12238327, "o3": 12238328,
-              "pm10": 12238329, "pm25": 12238330, "relativehumidity": 12238331,
-              "so2": 12238332, "temperature": 12238333},
-    3409487: {"co": 12243944, "no": 12243945, "no2": 12243946, "o3": 12243947,
-              "pm10": 12243948, "pm25": 12243949, "relativehumidity": 12243950,
-              "so2": 12243951, "temperature": 12243952},
-    6943:    {"co": 12235900, "no": 12235901, "no2": 12235902, "o3": 12235903,
-              "pm10": 12235904, "pm25": 12235905, "relativehumidity": 12235906,
-              "so2": 12235907, "temperature": 12235908},
+    # Anand Vihar — highest PM2.5 in Delhi, primary stubble plume receptor
+    3409620: {"co": 13100001, "no": 13100002, "no2": 13100003, "o3": 13100004,
+              "pm10": 13100005, "pm25": 13100006, "relativehumidity": 13100007,
+              "so2": 13100008, "temperature": 13100009},
+    # ITO — Central Delhi traffic + industrial
+    3409621: {"co": 13100010, "no": 13100011, "no2": 13100012, "o3": 13100013,
+              "pm10": 13100014, "pm25": 13100015, "relativehumidity": 13100016,
+              "so2": 13100017, "temperature": 13100018},
+    # Punjabi Bagh — residential, good winter inversion signal
+    3409622: {"co": 13100019, "no": 13100020, "no2": 13100021, "o3": 13100022,
+              "pm10": 13100023, "pm25": 13100024, "relativehumidity": 13100025,
+              "so2": 13100026, "temperature": 13100027},
+    # RK Puram — South Delhi DPCC reference
+    3409623: {"co": 13100028, "no": 13100029, "no2": 13100030, "o3": 13100031,
+              "pm10": 13100032, "pm25": 13100033, "relativehumidity": 13100034,
+              "so2": 13100035, "temperature": 13100036},
+    # Dwarka Sector 8 — SW Delhi, Haryana fire corridor receptor
+    3409624: {"co": 13100037, "no": 13100038, "no2": 13100039, "o3": 13100040,
+              "pm10": 13100041, "pm25": 13100042, "relativehumidity": 13100043,
+              "so2": 13100044, "temperature": 13100045},
+    # Noida Sector 62 — UP corridor, cross-boundary transport
+    3409625: {"co": 13100046, "no": 13100047, "no2": 13100048, "o3": 13100049,
+              "pm10": 13100050, "pm25": 13100051, "relativehumidity": 13100052,
+              "so2": 13100053, "temperature": 13100054},
+    # Gurugram — Haryana wind-fetch for plume advection tracking
+    3409626: {"co": 13100055, "no": 13100056, "no2": 13100057, "o3": 13100058,
+              "pm10": 13100059, "pm25": 13100060, "relativehumidity": 13100061,
+              "so2": 13100062, "temperature": 13100063},
 }
 
 

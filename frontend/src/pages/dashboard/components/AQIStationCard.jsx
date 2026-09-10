@@ -79,7 +79,7 @@ const AQIStationCard = ({ station, className = '' }) => {
             <Icon name="MapPin" size={16} className="text-gray-500" />
             <h3 className="font-semibold text-gray-900">{station?.name || 'Unknown Station'}</h3>
           </div>
-          <p className="text-sm text-gray-600">{station?.location || 'Maharashtra, India'}</p>
+          <p className="text-sm text-gray-600">{station?.location || 'Delhi NCR, India'}</p>
         </div>
         
         <div className="flex items-center space-x-2">

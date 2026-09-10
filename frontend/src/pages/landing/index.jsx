@@ -9,47 +9,47 @@ const LandingPage = () => {
   const features = [
     {
       icon: 'TrendingUp',
-      title: 'ML-Powered Predictions',
-      description: 'Advanced XGBoost model provides accurate 48-hour AQI forecasts based on historical patterns and real-time data.',
+      title: '72-Hour Coupled Forecasting',
+      description: 'Physics-chemistry coupled engine simulates two-way feedbacks between meteorology (PBL height, winds, inversion) and pollutants (PM2.5, PM10, O3, NOx).',
       color: 'bg-purple-100 text-purple-600',
     },
     {
       icon: 'MapPin',
-      title: '6 Monitoring Stations',
-      description: 'Real-time air quality data from 6 strategic locations across Navi Mumbai and Thane regions.',
+      title: '7 Delhi NCR Stations',
+      description: 'Real-time monitoring and forecasting across key receptors: Anand Vihar, ITO, Punjabi Bagh, RK Puram, Dwarka, Noida 62, and Gurugram.',
       color: 'bg-blue-100 text-blue-600',
     },
     {
-      icon: 'Activity',
-      title: 'Live Pollutant Tracking',
-      description: 'Monitor PM2.5, PM10, NO₂, SO₂, O₃, and CO levels with sub-hourly updates from MPCB stations.',
-      color: 'bg-green-100 text-green-600',
+      icon: 'Flame',
+      title: 'Stubble-Burning Plume Tracking',
+      description: 'Ingests NASA FIRMS active fire hotspots and computes regional Gaussian plume advection across Northwest India into Delhi NCR.',
+      color: 'bg-amber-100 text-amber-600',
     },
     {
-      icon: 'Bell',
-      title: 'Smart Alerts',
-      description: 'Configure custom thresholds and receive instant notifications when air quality deteriorates.',
+      icon: 'Activity',
+      title: 'Atmospheric Inversion Gauge',
+      description: 'Quantifies pre-dawn boundary layer collapse and inversion strength [0.0-1.0] that traps particulate matter near the surface.',
       color: 'bg-red-100 text-red-600',
     },
     {
       icon: 'BarChart3',
-      title: 'Historical Analytics',
-      description: 'Deep dive into trends with interactive charts, statistical summaries, and exportable reports.',
-      color: 'bg-amber-100 text-amber-600',
+      title: 'Coupling Explainability',
+      description: 'Transparent iteration trace demonstrating uncoupled vs. coupled PBL suppression %, surface dimming, and numerical convergence.',
+      color: 'bg-green-100 text-green-600',
     },
     {
       icon: 'Shield',
-      title: 'Enterprise Ready',
-      description: 'Built for reliability with scheduled data ingestion, model retraining, and robust API.',
+      title: 'Enterprise MLOps & API',
+      description: 'Automated 6-hour scheduler, live OpenAQ & NASA FIRMS ingestion, Supabase PostgreSQL, and Groq LLM health advisory assistant.',
       color: 'bg-indigo-100 text-indigo-600',
     },
   ];
 
   const stats = [
-    { value: '6', label: 'Monitoring Stations', icon: 'MapPin' },
-    { value: '978K+', label: 'Data Points', icon: 'Database' },
-    { value: '48h', label: 'Forecast Horizon', icon: 'Clock' },
-    { value: '6', label: 'Pollutants Tracked', icon: 'Wind' },
+    { value: '7', label: 'Delhi NCR Stations', icon: 'MapPin' },
+    { value: '72h', label: 'Coupled Forecast Horizon', icon: 'Clock' },
+    { value: '18%', label: 'Avg PBL Suppression Modeled', icon: 'Activity' },
+    { value: '2-Way', label: 'Aerosol-Weather Feedback', icon: 'Wind' },
   ];
 
   return (
@@ -84,27 +84,26 @@ const LandingPage = () => {
                 <span className="text-sm text-blue-700 font-medium">Live AQI Monitoring Active</span>
               </div>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                Real-Time Air Quality
+                Air Pollution–Weather
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mt-2">
-                  Intelligence Platform
+                  Coupled Forecasting System
                 </span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground mb-8 leading-relaxed">
-                Monitor, predict, and act on air quality data with ML-powered forecasts. 
-                Get 48-hour predictions, configure alerts, and protect your community from pollution.
+                High-resolution 72-hour Delhi NCR forecasts integrating dynamic two-way interactions between atmospheric physics (inversion layers, PBL height) and chemical dispersion (PM2.5, PM10, O3, stubble-burning plume advection).
               </p>
               <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                 <button 
-                  onClick={() => navigate('/register')}
+                  onClick={() => navigate('/login')}
                   className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all"
                 >
-                  Start Free Trial
+                  Explore Dashboard
                 </button>
                 <button 
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/register')}
                   className="px-8 py-4 border border-border text-foreground font-semibold rounded-xl hover:bg-muted transition-colors"
                 >
-                  View Dashboard
+                  View Documentation
                 </button>
               </div>
             </div>
@@ -117,16 +116,16 @@ const LandingPage = () => {
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="ml-4 text-sm text-slate-400">AirWatch Pro Dashboard</span>
+                  <span className="ml-4 text-sm text-slate-400">Atmospheric Intelligence · Delhi NCR</span>
                 </div>
                 
                 {/* AQI Card */}
-                <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 mb-4">
+                <div className="bg-gradient-to-r from-purple-700 to-rose-700 rounded-xl p-6 mb-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100 text-sm mb-1">Current AQI</p>
-                      <p className="text-5xl font-bold text-white">81</p>
-                      <p className="text-green-100 text-sm mt-1">Satisfactory</p>
+                      <p className="text-purple-200 text-sm mb-1">Delhi NCR Average AQI</p>
+                      <p className="text-5xl font-bold text-white">326</p>
+                      <p className="text-purple-200 text-sm mt-1">Very Poor · Inversion Trapping Active</p>
                     </div>
                     <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                       <Icon name="Wind" size={32} className="text-white" />
@@ -137,9 +136,9 @@ const LandingPage = () => {
                 {/* Station Cards */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { name: 'Mahape', aqi: 159, color: 'from-orange-500 to-amber-500' },
-                    { name: 'CBD Belapur', aqi: 255, color: 'from-red-500 to-rose-600' },
-                    { name: 'Sanpada', aqi: 108, color: 'from-yellow-500 to-green-500' },
+                    { name: 'Anand Vihar', aqi: 365, color: 'from-purple-600 to-rose-600' },
+                    { name: 'ITO', aqi: 310, color: 'from-purple-500 to-indigo-600' },
+                    { name: 'Punjabi Bagh', aqi: 325, color: 'from-purple-600 to-pink-600' },
                   ].map((station) => (
                     <div key={station.name} className="bg-white/10 rounded-lg p-3">
                       <p className="text-slate-400 text-xs mb-1 truncate">{station.name}</p>
@@ -152,15 +151,15 @@ const LandingPage = () => {
                 {/* Forecast Preview */}
                 <div className="mt-4 bg-white/10 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-slate-300">48h Forecast</span>
-                    <span className="text-xs text-purple-400">ML Predicted</span>
+                    <span className="text-sm text-slate-300">72h Coupled Forecast</span>
+                    <span className="text-xs text-amber-400 font-medium">σ=15° Plume Advection</span>
                   </div>
-                  <div className="flex items-end gap-1 h-12">
-                    {[65, 72, 78, 85, 92, 88, 95, 102, 98, 105].map((val, i) => (
+                  <div className="h-8 flex items-end gap-1">
+                    {[65, 78, 85, 92, 88, 70, 60, 75, 95, 100, 85, 70].map((h, i) => (
                       <div 
                         key={i} 
-                        className="flex-1 bg-purple-500/60 rounded-t"
-                        style={{ height: `${val}%` }}
+                        className="flex-1 bg-gradient-to-t from-purple-600 to-rose-500 rounded-t opacity-80"
+                        style={{ height: `${h}%` }}
                       ></div>
                     ))}
                   </div>

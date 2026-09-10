@@ -59,3 +59,29 @@ def get_aqi_category(aqi_value: float) -> Dict[str, str]:
     elif aqi_value <= 300: return {"category": "Poor", "color": "#FF8C00"} 
     elif aqi_value <= 400: return {"category": "Very Poor", "color": "#DC143C"} 
     else: return {"category": "Severe", "color": "#800000"}
+
+
+def get_aqi_color(aqi_value: float) -> str:
+    """Returns just the hex color string for a given AQI value.
+
+    Convenience wrapper around get_aqi_category() used by tests and
+    frontend colour-coding utilities that only need the colour.
+    """
+    return get_aqi_category(aqi_value)["color"]
+
+
+def validate_pollutants(data: Dict[str, Any]) -> bool:
+    """Validates a pollutant readings dict.
+
+    Returns True if data is non-empty and all values are non-negative
+    numbers. Returns False if data is empty or any value is negative.
+    """
+    if not data:
+        return False
+    for val in data.values():
+        try:
+            if float(val) < 0:
+                return False
+        except (TypeError, ValueError):
+            return False
+    return True

@@ -30,12 +30,14 @@ const RegistrationForm = () => {
   ];
 
   const locationOptions = [
-    { value: 'thane-belapur', label: 'Thane-Belapur Industrial Corridor' },
-    { value: 'navi-mumbai-central', label: 'Navi Mumbai Central' },
-    { value: 'panvel-industrial', label: 'Panvel Industrial Area' },
-    { value: 'kalamboli', label: 'Kalamboli' },
-    { value: 'taloja', label: 'Taloja Industrial Area' },
-    { value: 'other', label: 'Other Location' }
+    { value: 'anand-vihar', label: 'Anand Vihar, East Delhi' },
+    { value: 'ito', label: 'ITO, Central Delhi' },
+    { value: 'punjabi-bagh', label: 'Punjabi Bagh, West Delhi' },
+    { value: 'rk-puram', label: 'RK Puram, South Delhi' },
+    { value: 'dwarka-sector-8', label: 'Dwarka Sector 8, South-West Delhi' },
+    { value: 'noida-sector-62', label: 'Noida Sector 62, NCR' },
+    { value: 'gurugram-sector-51', label: 'Gurugram Sector 51, NCR' },
+    { value: 'other-delhi-ncr', label: 'Other Delhi NCR Location' }
   ];
 
   const validatePassword = (password) => {
