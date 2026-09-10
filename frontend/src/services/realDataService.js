@@ -9,9 +9,11 @@ const DEFAULT_STATIONS = [
     name: 'Anand Vihar, Delhi',
     location: 'East Delhi, Delhi NCR',
     coordinates: { lat: 28.6469, lng: 77.3164 },
-    currentAQI: 365,
-    aqi_category: 'Very Poor',
-    aqi_color: '#8f3f97',
+    currentAQI: 124,
+    aqi_category: 'Poor',
+    aqi_color: '#ff7e00',
+    pm25: 45.0,
+    pm10: 125.0,
     status: 'Online'
   },
   {
@@ -19,9 +21,11 @@ const DEFAULT_STATIONS = [
     name: 'ITO, Delhi',
     location: 'Central Delhi, Delhi NCR',
     coordinates: { lat: 28.6310, lng: 77.2433 },
-    currentAQI: 310,
-    aqi_category: 'Very Poor',
-    aqi_color: '#8f3f97',
+    currentAQI: 118,
+    aqi_category: 'Poor',
+    aqi_color: '#ff7e00',
+    pm25: 42.5,
+    pm10: 118.0,
     status: 'Online'
   },
   {
@@ -29,9 +33,11 @@ const DEFAULT_STATIONS = [
     name: 'Punjabi Bagh, Delhi',
     location: 'West Delhi, Delhi NCR',
     coordinates: { lat: 28.6683, lng: 77.1333 },
-    currentAQI: 325,
-    aqi_category: 'Very Poor',
-    aqi_color: '#8f3f97',
+    currentAQI: 132,
+    aqi_category: 'Poor',
+    aqi_color: '#ff7e00',
+    pm25: 48.2,
+    pm10: 134.0,
     status: 'Online'
   },
   {
@@ -39,9 +45,11 @@ const DEFAULT_STATIONS = [
     name: 'RK Puram, Delhi',
     location: 'South Delhi, Delhi NCR',
     coordinates: { lat: 28.5644, lng: 77.1895 },
-    currentAQI: 280,
+    currentAQI: 115,
     aqi_category: 'Poor',
     aqi_color: '#ff7e00',
+    pm25: 41.0,
+    pm10: 112.0,
     status: 'Online'
   },
   {
@@ -49,9 +57,11 @@ const DEFAULT_STATIONS = [
     name: 'Dwarka Sector 8, Delhi',
     location: 'South-West Delhi, Delhi NCR',
     coordinates: { lat: 28.5822, lng: 77.0330 },
-    currentAQI: 295,
+    currentAQI: 121,
     aqi_category: 'Poor',
     aqi_color: '#ff7e00',
+    pm25: 43.8,
+    pm10: 120.5,
     status: 'Online'
   },
   {
@@ -59,9 +69,11 @@ const DEFAULT_STATIONS = [
     name: 'Noida Sector 62, NCR',
     location: 'Uttar Pradesh, Delhi NCR',
     coordinates: { lat: 28.6270, lng: 77.3640 },
-    currentAQI: 320,
-    aqi_category: 'Very Poor',
-    aqi_color: '#8f3f97',
+    currentAQI: 128,
+    aqi_category: 'Poor',
+    aqi_color: '#ff7e00',
+    pm25: 46.5,
+    pm10: 128.0,
     status: 'Online'
   },
   {
@@ -69,9 +81,11 @@ const DEFAULT_STATIONS = [
     name: 'Gurugram Sector 51, NCR',
     location: 'Haryana, Delhi NCR',
     coordinates: { lat: 28.4595, lng: 77.0266 },
-    currentAQI: 285,
+    currentAQI: 122,
     aqi_category: 'Poor',
     aqi_color: '#ff7e00',
+    pm25: 44.0,
+    pm10: 122.0,
     status: 'Online'
   }
 ];
@@ -567,8 +581,8 @@ const getStationMeta = (stationId, stationObj = null) => {
   return {
     id: stationId || 3409620,
     name: 'Anand Vihar, Delhi',
-    currentAQI: 227,
-    pm25: 176.4,
+    currentAQI: 124,
+    pm25: 45.0,
     coordinates: { lat: 28.6469, lng: 77.3164 },
   };
 };
@@ -725,7 +739,7 @@ export const getFeedbackTrace = async (stationId, hourOffset = 1, stationObj = n
   }
 
   // Base PM2.5 for selected station
-  const basePm25 = station.pollutants?.pm25?.value || station.pm25 || (station.currentAQI ? Number((station.currentAQI * 0.78).toFixed(1)) : 176.4);
+  const basePm25 = station.pollutants?.pm25?.value || station.pm25 || (station.currentAQI ? Number((station.currentAQI * 0.36).toFixed(1)) : 45.0);
   const pm1 = Number((basePm25 * (1 + 0.015 * hourOffset)).toFixed(1));
 
   // Coupling Physics Iteration 1 -> 2 -> 3
@@ -804,7 +818,7 @@ export const getForecast72 = async (stationId, stationObj = null) => {
   const met = await fetchLiveDelhiMeteorology();
   const startIdx = met && met.time ? getCurrentHourIndex(met.time) : 0;
   const now = new Date();
-  const basePm25 = station.pollutants?.pm25?.value || station.pm25 || (station.currentAQI ? Number((station.currentAQI * 0.78).toFixed(1)) : 176.4);
+  const basePm25 = station.pollutants?.pm25?.value || station.pm25 || (station.currentAQI ? Number((station.currentAQI * 0.36).toFixed(1)) : 45.0);
 
   const steps = Array.from({ length: 72 }, (_, i) => {
     const dt = new Date(now.getTime() + (i + 1) * 3600 * 1000);
