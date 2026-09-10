@@ -211,19 +211,33 @@ const Dashboard = () => {
             {/* Active Tab Component */}
             <div>
               {activeCouplingTab === 'forecast72' && (
-                <Forecast72Chart stationId={selectedStationId} />
+                <Forecast72Chart
+                  stationId={selectedStationId}
+                  stationName={enrichedStations.find((s) => s.id === selectedStationId)?.name}
+                  station={enrichedStations.find((s) => s.id === selectedStationId)}
+                />
               )}
               {activeCouplingTab === 'inversion' && (
-                <InversionGauge stationId={selectedStationId} />
+                <InversionGauge
+                  stationId={selectedStationId}
+                  stationName={enrichedStations.find((s) => s.id === selectedStationId)?.name}
+                  station={enrichedStations.find((s) => s.id === selectedStationId)}
+                />
               )}
               {activeCouplingTab === 'plume' && (
                 <PlumeDispersionMap
                   selectedStationId={selectedStationId}
                   onSelectStation={(id) => setSelectedStationId(id)}
+                  stationName={enrichedStations.find((s) => s.id === selectedStationId)?.name}
+                  station={enrichedStations.find((s) => s.id === selectedStationId)}
                 />
               )}
               {activeCouplingTab === 'explainability' && (
-                <CouplingExplainabilityPanel stationId={selectedStationId} />
+                <CouplingExplainabilityPanel
+                  stationId={selectedStationId}
+                  stationName={enrichedStations.find((s) => s.id === selectedStationId)?.name}
+                  station={enrichedStations.find((s) => s.id === selectedStationId)}
+                />
               )}
             </div>
           </div>

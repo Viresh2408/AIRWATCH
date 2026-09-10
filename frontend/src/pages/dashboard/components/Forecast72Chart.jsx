@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import { TrendingUp, ShieldCheck, Eye, Layers } from 'lucide-react';
 
-const Forecast72Chart = ({ stationId = 3409620, stationName = 'Selected Station' }) => {
+const Forecast72Chart = ({ stationId = 3409620, stationName = 'Selected Station', station = null }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [horizon, setHorizon] = useState(72); // 24 | 48 | 72
@@ -29,7 +29,7 @@ const Forecast72Chart = ({ stationId = 3409620, stationName = 'Selected Station'
     let isMounted = true;
     setLoading(true);
 
-    getForecast72(stationId)
+    getForecast72(stationId, station)
       .then((res) => {
         if (isMounted) {
           setData(res);
@@ -44,7 +44,7 @@ const Forecast72Chart = ({ stationId = 3409620, stationName = 'Selected Station'
     return () => {
       isMounted = false;
     };
-  }, [stationId]);
+  }, [stationId, station]);
 
   if (loading) {
     return (

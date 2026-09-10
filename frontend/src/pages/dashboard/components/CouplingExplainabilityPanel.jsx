@@ -13,7 +13,7 @@ import {
   Info,
 } from 'lucide-react';
 
-const CouplingExplainabilityPanel = ({ stationId = 3409620, stationName = 'Selected Station' }) => {
+const CouplingExplainabilityPanel = ({ stationId = 3409620, stationName = 'Selected Station', station = null }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hourOffset, setHourOffset] = useState(1);
@@ -22,7 +22,7 @@ const CouplingExplainabilityPanel = ({ stationId = 3409620, stationName = 'Selec
     let isMounted = true;
     setLoading(true);
 
-    getFeedbackTrace(stationId, hourOffset)
+    getFeedbackTrace(stationId, hourOffset, station)
       .then((res) => {
         if (isMounted) {
           setData(res);
@@ -37,7 +37,7 @@ const CouplingExplainabilityPanel = ({ stationId = 3409620, stationName = 'Selec
     return () => {
       isMounted = false;
     };
-  }, [stationId, hourOffset]);
+  }, [stationId, hourOffset, station]);
 
   if (loading) {
     return (
@@ -169,7 +169,7 @@ const CouplingExplainabilityPanel = ({ stationId = 3409620, stationName = 'Selec
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
-            Iteration Convergence Trace (Station #{stationId}, h+{hourOffset})
+            Iteration Convergence Trace ({data?.station_name || stationName || `Station #${stationId}`}, h+{hourOffset})
           </span>
           <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="w-3.5 h-3.5" />

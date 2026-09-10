@@ -18,7 +18,7 @@ const CATEGORY_BG = {
   Severe: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 animate-pulse',
 };
 
-const InversionGauge = ({ stationId = 3409620, stationName = 'Selected Station' }) => {
+const InversionGauge = ({ stationId = 3409620, stationName = 'Selected Station', station = null }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPointIndex, setSelectedPointIndex] = useState(0);
@@ -27,7 +27,7 @@ const InversionGauge = ({ stationId = 3409620, stationName = 'Selected Station' 
     let isMounted = true;
     setLoading(true);
 
-    getInversionTimeline(stationId, 48)
+    getInversionTimeline(stationId, 48, station)
       .then((res) => {
         if (isMounted) {
           setData(res);
@@ -43,7 +43,7 @@ const InversionGauge = ({ stationId = 3409620, stationName = 'Selected Station' 
     return () => {
       isMounted = false;
     };
-  }, [stationId]);
+  }, [stationId, station]);
 
   if (loading) {
     return (
