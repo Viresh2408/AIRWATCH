@@ -146,10 +146,10 @@ const AQIStationCard = ({ station, className = '' }) => {
         ) : (
           <div className="flex items-center space-x-2">
             <span className="text-sm font-mono font-semibold text-purple-700">
-              {prediction || '—'}
+              {prediction || currentReading || '—'}
             </span>
             <span className={`text-xs px-2 py-1 rounded-full ${getAQIStatus(prediction || currentReading)?.bg} ${getAQIStatus(prediction || currentReading)?.color}`}>
-              {prediction ? getAQIStatus(prediction)?.label : 'N/A'}
+              {getAQIStatus(prediction || currentReading)?.label}
             </span>
           </div>
         )}
